@@ -9,10 +9,12 @@
   </div>
 
   <div class="mt-8">
-    <%= render 'search' %>
+    <%= render partial: 'search' %>
   </div>
 
-  <div id="messages" class="min-w-full">
-    <%= render @messages %>
-  </div>
+  <%= turbo_frame_tag "messages", target: '_top' do %>
+    <div class="min-w-full">
+      <%= render @messages %>
+    </div>
+  <% end %>
 </div>

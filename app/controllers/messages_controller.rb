@@ -3,7 +3,11 @@ class MessagesController < ApplicationController
 
   # GET /messages or /messages.json
   def index
-    @messages = Message.all.order(created_at: :desc)
+    if params[:query].blank?
+      @messages = Message.all.order(created_at: :desc)
+    else
+      @messages = Message.search_by_body(params[:query])
+    end
   end
 
   # GET /messages/1 or /messages/1.json
