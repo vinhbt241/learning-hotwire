@@ -6,7 +6,7 @@ class MessagesController < ApplicationController
     if params[:query].blank?
       @messages = Message.all.order(created_at: :desc)
     else
-      @messages = Message.search_by_body(params[:query])
+      @messages = Message.search_by_body(params[:query]).order(created_at: :desc)
     end
   end
 
@@ -25,16 +25,15 @@ class MessagesController < ApplicationController
 
   # POST /messages or /messages.json
   def create
-    @message = Message.new(message_params)
+    message = Message.create!(message_params)
+
+    message.broadcast_prepend_to "messages_channel", target: "messages", partial: 'messages/message'
 
     respond_to do |format|
-      if @message.save
-        format.html { redirect_to message_url(@message), notice: "Message was successfully created." }
-        format.json { render :show, status: :created, location: @message }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @message.errors, status: :unprocessable_entity }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.prepend(:messages, partial: "messages/message", locals: { message: message })
       end
+      format.html { redirect_to messages_url }
     end
   end
 
