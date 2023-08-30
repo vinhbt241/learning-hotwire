@@ -1,0 +1,22 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: learning_hotwire_development
+  username: postgres
+  host: ""
+
+test:
+  <<: *default
+  database: learning_hotwire_test
+  username: postgres
+  host: ""
+
+production:
+  <<: *default
+  database: learning_hotwire_production
+  username: learning_hotwire
+  password: <%= ENV["LEARNING_HOTWIRE_DATABASE_PASSWORD"] %>
