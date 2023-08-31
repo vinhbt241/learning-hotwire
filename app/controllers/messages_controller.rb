@@ -26,15 +26,7 @@ class MessagesController < ApplicationController
   # POST /messages or /messages.json
   def create
     message = Message.create!(message_params)
-
     message.broadcast_prepend_to "messages_channel", target: "messages", partial: 'messages/message'
-
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.prepend(:messages, partial: "messages/message", locals: { message: message })
-      end
-      format.html { redirect_to messages_url }
-    end
   end
 
   # PATCH/PUT /messages/1 or /messages/1.json
